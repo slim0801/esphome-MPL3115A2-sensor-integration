@@ -1,0 +1,51 @@
+esphome:
+  name: senzor_custom
+  platform: ESP32
+  board: esp-wrover-kit
+  includes:
+    - senzor_custom/src/mpl3115a2.h
+  libraries:
+    - "Adafruit MPL3115A2 Library"
+
+wifi:
+  ssid: "YOUR_WIFI_NAME"
+  password: "YOUR_WIFI_PASS"
+  # **Temporary solution because (you can remove this block if you don't get a compile error of "could not find IP address")**
+  manual_ip:
+    static_ip: 192.168.1.250
+    gateway: 192.168.1.1
+    subnet: 255.255.0.0
+    dns1: 192.168.1.1
+    dns2: 8.8.8.8
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Senzor Custom Fallback Hotspot"
+    password: "THE_AUTO_GENERATED_PASSWORD"
+
+captive_portal:
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+
+i2c:
+
+sensor:
+- platform: custom
+  lambda: |-
+    auto mpl_sensor = new MPL3115A2Sensor();
+    App.register_component(mpl_sensor);
+    return {mpl_sensor->temperature_sensor, mpl_sensor->pressure_sensor};
+
+  sensors:
+  - name: "Temperature Sensor"
+    unit_of_measurement: °C
+    accuracy_decimals: 1
+  - name: "Pressure Sensor"
+    unit_of_measurement: hPa
+    accuracy_decimals: 2
